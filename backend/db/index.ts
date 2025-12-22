@@ -35,11 +35,11 @@ const EdgesSchema =new Schema({
 // for  intial the postion  of blocks comming from pront end 
 const PostionSchema  = new Schema({
     x:{
-        type:String,
+        type:Number,
         required:true
     },
     y:{
-        type:String,
+        type:Number,
         required:true
     },
     },{
@@ -48,14 +48,14 @@ const PostionSchema  = new Schema({
 // schema for delcaring NodeMetadeata like type nodes used 
     const NodeDataSchema= new Schema({
         kind:{type:String, 
-            enum:["Action","Trigger"] } ,
+            enum:["action","trigger"] } ,
         metadata:Schema.Types.Mixed
     },{
         _id:false
     })
 
 
-const  NodeSchema = new Schema({
+const  WorkflowNodeSchema= new Schema({
     id:{
         type:String,
         required:true
@@ -64,7 +64,7 @@ const  NodeSchema = new Schema({
     position:PostionSchema,
     Credencials:Schema.Types.Mixed,
     
-    type:{
+    nodeId:{
         type: mongoose.Types.ObjectId,
         ref:"Nodes"
     },
@@ -78,10 +78,64 @@ const WorkFlowSchema= new Schema ({
         required:true ,
         ref:"User "
     },
-    nodes:[NodeSchema],
+    nodes:[WorkflowNodeSchema],
     edges :[EdgesSchema],
 })
+const CredentialsTypeSchema = new Schema({
+    title:{
+        type:String,
+        required:true
+    },
+    type:{
+        type:String,
+        required:true,
+        enum:["string", "number"]
+    },
+    required:{
+        type:Boolean,
+        required:true
+    },
+})
+// here  adding node Schema and its prop  ...  
+const NodesSchema = new Schema({
+    title:{
+        type:String,
+        required:true
+    },
+    description:{
+        type:String,
+        required:true
+    },
+    type:{
+        type:String,
+        enum:["action" , "trigger"],
+        required:true
+    },
+    credentialsTypes:[CredentialsTypeSchema]
+})
 
-export const  User= mongoose.model("User" , UserSchema)
+const ExecutionID= new Schema({
+    WorkFlow:{
+        type:mongoose.Types.ObjectId,
+        required:true,
+        ref:"WorkFlow"
+    },
+    status:{
+        type:String,
+        enum :["Success" , "Pending", "Failure"]
+
+    },
+    startTime:{
+        type:Date, 
+        default:Date.now()
+
+    },
+    endTime:{
+        type:Date
+    }
+
+})
+export const  User = mongoose.model("User" , UserSchema)
 export const WorkFlow = mongoose.model("Workflow" , WorkFlowSchema)
-
+export const Nodes =  mongoose.model("Nodes" , NodesSchema )
+export  const execution =  mongoose.model("execution" , ExecutionID)
