@@ -4,11 +4,13 @@ import mongoose,{Schema} from "mongoose";
 
 const  UserSchema = new Schema ({
     username:{
-        name:String,
-        required:true
+        type:String,
+        required:true,
+        unique:true
+        
     },
     password:{
-        name:String ,
+        type:String ,
         required:true
     }
 })
