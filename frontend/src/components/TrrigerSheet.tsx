@@ -40,7 +40,7 @@ const Supportted_Trigger= [{
 
 export const ImportAssets =["SOL","ETH", 'BIT']
 
-
+ 
  export const TrrigerSheet = function ({onSelect}: { onSelect: (metaData: NodeMetaData) => void }) {
     const [metadata, setmetadata]= useState<PriceNodeMetaData | TimeNodeMetaData>({
         time:3600

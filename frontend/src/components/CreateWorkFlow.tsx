@@ -32,7 +32,7 @@ interface NodeType{
        // label:string
 
     //label
-    }
+    } 
     
     //for stating the postition  of the genrate block
     id: string, position: { x:number, y: number }
