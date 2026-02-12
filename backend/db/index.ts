@@ -1,143 +1,146 @@
 
-import mongoose,{Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 
-const  UserSchema = new Schema ({
-    username:{
-        type:String,
-        required:true,
-        unique:true
-        
+const UserSchema = new Schema({
+    username: {
+        type: String,
+        required: true,
+        unique: true
+
     },
-    password:{
-        type:String ,
-        required:true
+    password: {
+        type: String,
+        required: true
     }
 })
 
 // the for data related to edges 
-const EdgesSchema =new Schema({
-    id:{
-        type:String,
-        required:true
+const EdgesSchema = new Schema({
+    id: {
+        type: String,
+        required: true
     },
-    source:{
-        type:String,
-        required:true
+    source: {
+        type: String,
+        required: true
     },
-    target:{
-        type:String,
-        required:true
+    target: {
+        type: String,
+        required: true
     }
 },
-{
-    _id:false
-})
+    {
+        _id: false
+    })
 
 // for  intial the postion  of blocks comming from pront end 
-const PostionSchema  = new Schema({
-    x:{
-        type:Number,
-        required:true
+const PostionSchema = new Schema({
+    x: {
+        type: Number,
+        required: true
     },
-    y:{
-        type:Number,
-        required:true
+    y: {
+        type: Number,
+        required: true
     },
-    },{
-        _id:false 
-    })
+}, {
+    _id: false
+})
 // schema for delcaring NodeMetadeata like type nodes used 
-    const NodeDataSchema= new Schema({
-        kind:{type:String, 
-            enum:["action","trigger"] } ,
-        metadata:Schema.Types.Mixed
-    },{
-        _id:false
-    })
+const NodeDataSchema = new Schema({
+    kind: {
+        type: String,
+        enum: ["action", "trigger"]
+    },
+    metadata: Schema.Types.Mixed
+}, {
+    _id: false
+})
 
 
-const  WorkflowNodeSchema= new Schema({
-    id:{
-        type:String,
-        required:true
+const WorkflowNodeSchema = new Schema({
+    id: {
+        type: String,
+        required: true
     },
 
-    position:PostionSchema,
-    Credencials:Schema.Types.Mixed,
-    
-    nodeId:{
+    position: PostionSchema,
+    Credentials: Schema.Types.Mixed,
+    type: { type: String, required: true },
+
+    nodeId: {
         type: mongoose.Types.ObjectId,
-        ref:"Nodes"
+        ref: "Nodes"
     },
-    data:NodeDataSchema
+    data: NodeDataSchema
 })
 
 // so here the bottom userId referse to what is above 
-const WorkFlowSchema= new Schema ({
-    userId:{
-        type:mongoose.Types.ObjectId,
-        required:true ,
-        ref:"User "
+const WorkFlowSchema = new Schema({
+    userId: {
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "User"
     },
-    nodes:[WorkflowNodeSchema],
-    edges :[EdgesSchema],
+    nodes: [WorkflowNodeSchema],
+    edges: [EdgesSchema],
 })
 const CredentialsTypeSchema = new Schema({
-    title:{
-        type:String,
-        required:true
+    title: {
+        type: String,
+        required: true
     },
-    type:{
-        type:String,
-        required:true,
-        enum:["string", "number"]
+    type: {
+        type: String,
+        required: true,
+        enum: ["string", "number"]
     },
-    required:{
-        type:Boolean,
-        required:true
+    required: {
+        type: Boolean,
+        required: true
     },
 })
 // here  adding node Schema and its prop  ...  
 const NodesSchema = new Schema({
-    title:{
-        type:String,
-        required:true
+    title: {
+        type: String,
+        required: true
     },
-    description:{
-        type:String,
-        required:true
+    description: {
+        type: String,
+        required: true
     },
-    type:{
-        type:String,
-        enum:["action" , "trigger"],
-        required:true
+    type: {
+        type: String,
+        enum: ["action", "trigger"],
+        required: true
     },
-    credentialsTypes:[CredentialsTypeSchema]
+    credentialsTypes: [CredentialsTypeSchema]
 })
 
-const ExecutionID= new Schema({
-    WorkFlow:{
-        type:mongoose.Types.ObjectId,
-        required:true,
-        ref:"WorkFlow"
+const ExecutionID = new Schema({
+    WorkFlow: {
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "WorkFlow"
     },
-    status:{
-        type:String,
-        enum :["Success" , "Pending", "Failure"]
+    status: {
+        type: String,
+        enum: ["Success", "Pending", "Failure"]
 
     },
-    startTime:{
-        type:Date, 
-        default:Date.now()
+    startTime: {
+        type: Date,
+        default: Date.now()
 
     },
-    endTime:{
-        type:Date
+    endTime: {
+        type: Date
     }
 
 })
-export const  User = mongoose.model("User" , UserSchema)
-export const WorkFlow = mongoose.model("Workflow" , WorkFlowSchema)
-export const Nodes =  mongoose.model("Nodes" , NodesSchema )
-export  const execution =  mongoose.model("execution" , ExecutionID)
+export const User = mongoose.model("User", UserSchema)
+export const WorkFlow = mongoose.model("Workflow", WorkFlowSchema)
+export const Nodes = mongoose.model("Nodes", NodesSchema)
+export const execution = mongoose.model("execution", ExecutionID)

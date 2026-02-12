@@ -7,20 +7,27 @@ export interface AuthRequest extends Request {
     userId?: string;
 }
 
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
-    const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(403).json({ message: "Invalid token" });
+const JWT_SECRET = process.env.JWT_SECRET!;
+export function authMiddleware(req: Request, res: Response, next: NextFunction) {
+    const header = req.headers["authorization"];
+
+
+    if (!header) {
+        return res.status(403).json({ message: "No token provided" });
     }
-
-    const token = authHeader.split(' ')[1];
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET! ) as JwtPayload;
-        req.userId = (decoded as { _id: string })._id;
+
+        const response = jwt.verify(header, JWT_SECRET) as JwtPayload;
+
+
+        (req as any).userId = response._id;
+
         next();
-    } catch (error) {
-        return res.status(403).json({ message: "Invalid token" });
+    } catch (e) {
+        res.status(403).json({
+            message: "You are not logged in"
+        });
     }
-};
+}
