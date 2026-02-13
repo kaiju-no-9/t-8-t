@@ -17,11 +17,12 @@ const SignupSchema = z.object({
 const CreateWorkflowSchema = z.object({
   //nodes..........................................
   nodes: z.array(z.object({
-    type: z.string(),
+    nodeId: z.string(),
     data: z.object({
       kind: z.enum(["action", "trigger"]),
       metadata: z.any(),
     }),
+    Credentials: z.any(),
     id: z.string(),
     position: z.object({
       x: z.number(),
@@ -39,11 +40,12 @@ const CreateWorkflowSchema = z.object({
 const UpdateWorkflowSchema = z.object({
   //nodes..........................................
   nodes: z.array(z.object({
-    type: z.string(),
+    nodeId: z.string(),
     data: z.object({
       kind: z.enum(["action", "trigger"]),
       metadata: z.any(),
     }),
+    Credentials: z.any(),
     id: z.string(),
     position: z.object({
       x: z.number(),
@@ -193,8 +195,9 @@ app.put("/workflow/:workflowId", authMiddleware, async (req, res) => {
 });
 // for workflow Id validation 
 app.get("/workflow/:workflowId", authMiddleware, async (req, res) => {
-  const workflow = WorkFlow.findById(req.params.workflowId);
-  if (!workflow) {
+  const workflow = await WorkFlow.findById(req.params.workflowId);
+
+  if (!workflow || workflow.userId.toString() !== req.userId) {
     return res.status(404).json({
       message: "Workflow not found"
     });
@@ -210,14 +213,21 @@ app.get("/workflow/executions/:workflowId", authMiddleware, async (req, res) => 
   const executions = await execution.find({
     WorkFlow: req.params.workflowId
   });
-  res.json({executions})
+  res.json({ executions })
 
 });
 
+app.get("/workflow", authMiddleware, async (req, res) => {
+  const workflows = await WorkFlow.find({
+    userId: req.userId
+  });
+  res.json({ workflows })
+})
+
 // nodes 
-app.get("/nodes", (req, res) => {
-  const nodes = Nodes.find();
-  res.json({nodes})
+app.get("/nodes", async (req, res) => {
+  const nodes = await Nodes.find();
+  res.json({ nodes })
 
 })
 
